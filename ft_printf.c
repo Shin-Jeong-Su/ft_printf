@@ -29,25 +29,51 @@ int	get_num_va(const char *str)
 	return (num);
 }
 
+int check_format(const char **str,va_list *ap){
+	int base;
+
+	base = 0;
+	(*str)++;
+	if (**str =='c')
+		va_arg(*ap, char);
+	else if (**str == 's')
+		va_arg(*ap, const char *);
+	else if (**str == 'd' || **str == 'i')
+		va_arg(*ap, int);
+	else if (**str == 'p')
+		va_arg(*ap, void *);
+	else if (**str == 'u')
+		va_arg(*ap, unsigned int);
+	else if (**str == 'x')
+		va_arg(*ap, int);
+	else if (**str == 'X')
+		va_arg(*ap, int);
+	else if (**str == '%')
+		ft_putchar('%');
+	else
+	(*str)++;
+
+	if(base == 10)
+	else if(base == 16)
+	
+
+	//cspdiuxX%
+}
+
 int	ft_printf(const char *str, ...)
 {
 	va_list	ap;
-	char	buf[1024];
-	int		num;
-	char	*ret;
-	char	*type_each;
-
-	//get variadic num
-	num = get_num_va(str);
-
-	//initialize va_list
-	va_start (ap,num);
-
-	//copy str to buf
-	while((ret = va_arg(ap,int)))
+	va_start (ap,str);
+	while (*str)
 	{
-		//write to strout
-		put_nbr(ret);
+		if (*str != '%')
+			ft_putchar(str);
+		else
+		{
+			if (check_format(&str, &ap))
+				;//print();
+		}
+		str++;
 	}
 	va_end(ap);
 }
