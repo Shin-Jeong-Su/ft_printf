@@ -6,17 +6,16 @@
 /*   By: jeshin <jeshin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/25 17:01:07 by jeshin            #+#    #+#             */
-/*   Updated: 2023/12/07 17:34:08 by jeshin           ###   ########.fr       */
+/*   Updated: 2023/12/07 20:07:17 by jeshin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-int print_format(const char **str,va_list *ap){
-	int	err_is;
-
-	err_is = 0;
+void print_format(const char **str, va_list *ap, int *va_num)
+{
 	(*str)++;
+	(*va_num)++;
 	if (**str =='c')
 		ft_putchar_fd(va_arg(*ap,int),1);
 	else if (**str == 's')
@@ -37,24 +36,55 @@ int print_format(const char **str,va_list *ap){
 		ft_putchar_fd('%',1);
 	else
 		ft_putchar_fd(**str,1);
-	if(err_is == 1)
-		return (0);
-	return (1);
+}
+
+void	treate_unsigned_char(const char *str, int *num)
+{
+	char *tmp;
+	int		count;
+	int		is_digit;
+
+	is_digit = 0;
+	count = 0;
+	tmp = (char *)(str + 1);
+	(*num)++;
+	if (*tmp == '\\' || *tmp == '\n' || *tmp == 't' || *tmp == 'r')
+	{
+		ft_strlcpy(tmp,str,2);
+		ft_putstr_fd(tmp,1);
+		return ;
+	}
+	while (ft_isdigit(*tmp))
+	{
+		if(count == 3)
+			break;
+		if(!is_digit)
+			is_digit = 1;
+		count++;
+		tmp++;
+	}
+	ft_strlcpy(tmp,str,count+1);
+	ft_putstr_fd(tmp,1);
 }
 
 int	ft_printf(const char *str, ...)
 {
-	va_list	ap;
+	va_list		ap;
+	int			num;
+
 	va_start (ap,str);
+	num = 0;
 	while (*str)
 	{
 		if (*str != '%')
-			ft_putchar_fd(*str,1);
-		else
-			if (!print_format(&str, &ap))
-				return (-1);
+		{
+			num++;
+			ft_putchar_fd(*str, 1);
+		}
+		else if(*str == '%')
+			print_format(&str, &ap, &num);
 		str++;
 	}
 	va_end(ap);
-	return (1);
+	return (num);
 }

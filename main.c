@@ -17,15 +17,9 @@ void test(int n,...)
 }
 
 int main(){
-	char *str = "asdf 1234";
+	//char *str = "asdf 1234";
 	int n= 214748364;
-	int n= 0;
-	// test(n,1,3,5);
-	// printf("%p\n",&n);
-	// ft_putaddr_fd(&n,1);
-	// printf("%x\n",n);
-	// ft_puthex_fd(n,1);
-	ft_printf("asdfasdf %u\n",n);
-	printf("asdfasdf %u\n",n);
+	int m =  ft_printf("\09");
+	printf("%d\n",m);
 	return (0);
 }

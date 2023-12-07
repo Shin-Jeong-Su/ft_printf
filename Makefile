@@ -12,16 +12,20 @@ SUB_LIB_DIR = ./libft
 SUB_LIB = libft.a
 
 all : $(NAME)
+
 $(NAME) : $(OBJS) $(SUB_LIB_DIR)/$(SUB_LIB)
 	cp $(SUB_LIB_DIR)/$(SUB_LIB) $(NAME)
 	$(AR) $(ARFLAGS) $(NAME) $(OBJS)
-$(SUB_LIBF_DIR)/$(SUB_LIB) : 
+
+$(SUB_LIB_DIR)/$(SUB_LIB) :
 	$(MAKE) -C $(SUB_LIB_DIR)
+
 %.o : %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 clean : 
 	$(RM) $(OBJS)
+	$(MAKE) -C $(SUB_LIB_DIR) clean
 fclean : clean
 	$(RM) $(NAME)
-re : 
-	fclean all
+	$(MAKE) -C $(SUB_LIB_DIR) fclean
+re : fclean all
