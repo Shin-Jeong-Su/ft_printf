@@ -6,65 +6,46 @@
 /*   By: jeshin <jeshin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/25 17:01:07 by jeshin            #+#    #+#             */
-/*   Updated: 2023/12/07 20:07:17 by jeshin           ###   ########.fr       */
+/*   Updated: 2023/12/09 18:36:09 by jeshin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-void print_format(const char **str, va_list *ap, int *va_num)
+int	check_str(va_list *ap, int *num)
 {
-	(*str)++;
-	(*va_num)++;
-	if (**str =='c')
-		ft_putchar_fd(va_arg(*ap,int),1);
-	else if (**str == 's')
-		ft_putstr_fd(va_arg(*ap,char *),1);
-	else if (**str == 'd')
-		ft_putnbr_fd(va_arg(*ap,int),1);
-	else if (**str == 'i')
-		ft_putnbr_fd(va_arg(*ap,int),1);
-	else if (**str == 'p')
-		ft_putaddr_fd(va_arg(*ap,void *),1);
-	else if (**str == 'u')
-		ft_putnbr_fd(va_arg(*ap,unsigned int),1);
-	else if (**str == 'x')
-		ft_puthex_fd(va_arg(*ap,int),1,0);
-	else if (**str == 'X')
-		ft_puthex_fd(va_arg(*ap,int),1,1);
-	else if (**str == '%')
-		ft_putchar_fd('%',1);
+	char	*str;
+
+	str = va_arg(*ap, char *);
+	if (str == 0)
+		*num += ft_putstr("(null)");
 	else
-		ft_putchar_fd(**str,1);
+		*num += ft_putstr(str);
+	return (0);
 }
 
-void	treate_unsigned_char(const char *str, int *num)
+void	print_format(const char **str, va_list *ap, int *num)
 {
-	char *tmp;
-	int		count;
-	int		is_digit;
-
-	is_digit = 0;
-	count = 0;
-	tmp = (char *)(str + 1);
-	(*num)++;
-	if (*tmp == '\\' || *tmp == '\n' || *tmp == 't' || *tmp == 'r')
-	{
-		ft_strlcpy(tmp,str,2);
-		ft_putstr_fd(tmp,1);
-		return ;
-	}
-	while (ft_isdigit(*tmp))
-	{
-		if(count == 3)
-			break;
-		if(!is_digit)
-			is_digit = 1;
-		count++;
-		tmp++;
-	}
-	ft_strlcpy(tmp,str,count+1);
-	ft_putstr_fd(tmp,1);
+	if (**str == 'c')
+		*num += ft_putchar(va_arg(*ap, int));
+	else if (**str == 's')
+		check_str(ap, num);
+	else if (**str == 'd')
+		ft_putnbr_cnt(va_arg(*ap, int), num);
+	else if (**str == 'i')
+		ft_putnbr_cnt(va_arg(*ap, int), num);
+	else if (**str == 'p')
+		ft_putaddr_cnt(va_arg(*ap, void *), num);
+	else if (**str == 'u')
+		ft_putnbr_unsigned(va_arg(*ap, unsigned int), num);
+	else if (**str == 'x')
+		ft_puthex_cnt(va_arg(*ap, unsigned int), 0, num);
+	else if (**str == 'X')
+		ft_puthex_cnt(va_arg(*ap, unsigned int), 1, num);
+	else if (**str == '%')
+		*num += ft_putchar('%');
+	else
+		*num += ft_putchar(**str);
 }
 
 int	ft_printf(const char *str, ...)
@@ -72,17 +53,17 @@ int	ft_printf(const char *str, ...)
 	va_list		ap;
 	int			num;
 
-	va_start (ap,str);
+	va_start (ap, str);
 	num = 0;
 	while (*str)
 	{
 		if (*str != '%')
+			num += ft_putchar(*str);
+		else if (*str == '%')
 		{
-			num++;
-			ft_putchar_fd(*str, 1);
-		}
-		else if(*str == '%')
+			str++;
 			print_format(&str, &ap, &num);
+		}
 		str++;
 	}
 	va_end(ap);
